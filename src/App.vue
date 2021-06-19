@@ -1,19 +1,28 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <div id="nav">
+      <router-link to="/BeforeSignIn">Before Sign In Page</router-link>
+      <router-link to="/AfterSignIn">After Sign In Page</router-link>
+    </div>
+    <div class="sign-in">
+      <span @click="signIn">Sign In</span>
+      <span @click="signOut">Sign Out</span>
+    </div>
+    <router-view />
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
+  methods: {
+    signIn() {
+      this.$store.dispatch("signInWithGoogle");
+    },
+    signOut() {
+      this.$store.dispatch("signOut");
+    },
+  },
+};
 </script>
 
 <style>
@@ -23,6 +32,27 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+}
+#nav {
+  padding: 30px;
+}
+#nav a {
+  font-weight: bold;
+  color: #2c3e50;
+  padding: 0 1rem;
+}
+#nav a:hover {
+  color: #2c3e502b;
+}
+.sign-in span {
+  font-weight: bold;
+  color: #2c3e50;
+  padding: 0 1rem;
+}
+.sign-in span:hover {
+  color: #2c3e502b;
+}
+#nav a.router-link-exact-active {
+  color: #42b983;
 }
 </style>
