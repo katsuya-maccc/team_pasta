@@ -1,28 +1,21 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div>
+    <osusumeSearch />
+    <div>
+      --以下いいね機能--
+    </div>
+    <good />
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import osusumeSearch from "@/components/osusumeSearch.vue";
+import good from "@/components/good.vue";
 
 export default {
-  name: 'App',
   components: {
-    HelloWorld
-  }
-}
+    osusumeSearch,
+    good,
+  },
+};
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
