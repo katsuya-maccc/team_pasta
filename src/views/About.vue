@@ -79,6 +79,9 @@ export default {
       }
       return selectedSongs;
     },
+    user() {
+      return this.$store.state.user;
+    },
   },
 
   methods: {
@@ -112,7 +115,7 @@ export default {
       await firebase
         .firestore()
         .collection("users")
-        .doc("uid")
+        .doc(this.user.uid)
         .collection("playlist")
         .add({ songs: this.selectSongs });
       for (let result of this.results) {
