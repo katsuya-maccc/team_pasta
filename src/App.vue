@@ -1,6 +1,9 @@
 <template>
   <div id="app">
     <div id="nav">
+      <router-link to="/home">Home</router-link> |
+      <router-link to="/createPlaylist">Create Playlist</router-link> |
+      <router-link to="/playlist">Display Playlist</router-link>
       <router-link to="/BeforeSignIn">Before Sign In Page</router-link>
       <router-link to="/AfterSignIn">After Sign In Page</router-link>
     </div>
@@ -26,33 +29,30 @@ export default {
 </script>
 
 <style>
+body {
+  background-color: rgb(34, 34, 34);
+
+  font-family: "MS Pゴシック", sans-serif;
+}
+
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
 }
+
 #nav {
   padding: 30px;
 }
+
 #nav a {
   font-weight: bold;
   color: #2c3e50;
-  padding: 0 1rem;
 }
-#nav a:hover {
-  color: #2c3e502b;
-}
-.sign-in span {
-  font-weight: bold;
-  color: #2c3e50;
-  padding: 0 1rem;
-}
-.sign-in span:hover {
-  color: #2c3e502b;
-}
+
 #nav a.router-link-exact-active {
-  color: #42b983;
+  color: rgb(104, 104, 246);
 }
 </style>

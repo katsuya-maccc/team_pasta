@@ -18,6 +18,7 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
+export const functions = firebase.functions();
 /**
  * Vue.observable を使って、firebase.auth()をVueアプリ全体に共有する。
  * this.$authがアプリ全体でアクセスできる様になる。
