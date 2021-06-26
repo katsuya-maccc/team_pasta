@@ -10,14 +10,33 @@ const store = new Vuex.Store({
       uid: "",
       displayName: "",
       photoURL: "",
+      category: "",
+      userValence: "",
+      userAcousticness: "",
+      userInstrumentalness: "",
+      userBpm: "",
     },
   },
   mutations: {
     setUser(state, user) {
-      const { id, name, UserImage } = user;
+      const {
+        id,
+        name,
+        UserImage,
+        category,
+        userValence,
+        userAcousticness,
+        userInstrumentalness,
+        userBpm,
+      } = user;
       state.user.uid = id;
       state.user.displayName = name;
       state.user.photoURL = UserImage;
+      state.user.category = category;
+      state.user.userValence = userValence;
+      state.user.userAcousticness = userAcousticness;
+      state.user.userInstrumentalness = userInstrumentalness;
+      state.user.userBpm = userBpm;
     },
   },
   actions: {
@@ -58,6 +77,11 @@ firebase.auth().onAuthStateChanged((user) => {
           id: user.uid,
           name: user.displayName,
           UserImage: user.photoURL,
+          category: doc.category | "",
+          userValence: doc.userValence | "",
+          userAcousticness: doc.userAcousticness | "",
+          userInstrumentalness: doc.userInstrumentalness | "",
+          userBpm: doc.userBpm | "",
         };
         // doc.exists がない === 初回ログイン
         // はじめてのログインなので、 userProfile を firestore に保存
@@ -71,6 +95,15 @@ firebase.auth().onAuthStateChanged((user) => {
         store.commit("setUser", userProfile);
       });
   } else {
-    store.commit("setUser", { id: "", name: "", UseImage: "" });
+    store.commit("setUser", {
+      id: "",
+      name: "",
+      UseImage: "",
+      category: "",
+      userValence: "",
+      userAcousticness: "",
+      userInstrumentalness: "",
+      userBpm: "",
+    });
   }
 });
