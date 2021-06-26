@@ -1,6 +1,9 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
+
+import Osusume from "../components/osusumeSearch.vue";
+import Playlist from "../components/anythingSearch.vue";
 import BeforeSignIn from "@/views/BeforeSignIn.vue";
 import AfterSignIn from "@/views/AfterSignIn.vue";
 import store from "@/store";
@@ -12,6 +15,17 @@ const routes = [
     path: "/home",
     name: "Home",
     component: Home,
+  },
+  
+  {
+    path: "/osusume",
+    name: "Osusume",
+    component: Osusume,
+  },
+  {
+    path: "/playlist",
+    name: "playlist",
+    component: Playlist,
   },
   {
     path: "/createPlaylist",

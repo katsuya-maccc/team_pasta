@@ -3,9 +3,11 @@
     <div id="nav">
       <router-link to="/home">Home</router-link> |
       <router-link to="/createPlaylist">Create Playlist</router-link> |
-      <router-link to="/playlist">Display Playlist</router-link>
-      <router-link to="/BeforeSignIn">Before Sign In Page</router-link>
-      <router-link to="/AfterSignIn">After Sign In Page</router-link>
+      <router-link to="/playlist">Display Playlist</router-link> |
+      <router-link to="/BeforeSignIn">Before Sign In Page</router-link> |
+      <router-link to="/AfterSignIn">After Sign In Page</router-link> |
+      <router-link to="/osusume">osusume</router-link> |
+      <router-link to="/playlist">playlist</router-link>
     </div>
     <div class="sign-in">
       <span @click="signIn">Sign In</span>
@@ -31,10 +33,9 @@ export default {
 <style>
 body {
   background-color: rgb(34, 34, 34);
-
+  color: aliceblue;
   font-family: "MS Pゴシック", sans-serif;
 }
-
 
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
