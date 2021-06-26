@@ -1,21 +1,12 @@
 <template>
   <div>
-    <osusumeSearch />
     <div>
-      --以下いいね機能--
+      <router-link to="/">Home</router-link> |
+      <router-link to="/about">About</router-link> |
+      <router-link to="/my-page">MyPage</router-link> |
+      <router-link to="/osusume">osusume</router-link> |
+      <router-link to="/playlist">playlist</router-link>
     </div>
-    <good />
+    <router-view />
   </div>
 </template>
-
-<script>
-import osusumeSearch from "@/components/osusumeSearch.vue";
-import good from "@/components/good.vue";
-
-export default {
-  components: {
-    osusumeSearch,
-    good,
-  },
-};
-</script>

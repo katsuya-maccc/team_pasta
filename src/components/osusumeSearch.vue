@@ -1,24 +1,23 @@
 <template>
   <div class="osusume">
-    <p>ユーザー名を入力</p>
+    自分のユーザー名を入力
     <div>
       <input type="text" v-model="inputText" />
       <button v-on:click="getMyinfo">ログイン</button>
     </div>
     <div>----</div>
-    <button v-on:click="osusumeSearch">探す</button>
-    <div>----</div>
-    <div v-for="user in osusumeUsers2" :key="user">
-      <div>ユーザー名：{{ user.name }}</div>
-      <div>お気に入りアーティスト：{{ user.likeArtist }}</div>
-      <div><button v-on:click="goodPlus">いいね！</button></div>
+    <div>
+      <button v-on:click="search">おすすめユーザーを探す</button>
+    </div>
+    <div v-for="user in Playlist" :key="user">
+      <div>ユーザー名：{{ user[0].username }}</div>
+      <div>お気に入りアーティスト：{{ user[0].likeArtist }}</div>
+      <div>--Playlist--</div>
+      <div v-for="playlist in user" :key="playlist">
+        <div>曲名：{{ playlist.musicName }}</div>
+        <div>{{ playlist.artist }}</div>
+      </div>
       <div>----</div>
-    </div>
-    <div>
-      ----
-    </div>
-    <div>
-      <button>アカウントを探しに行く！</button>
     </div>
   </div>
 </template>
@@ -29,27 +28,11 @@ import firebase from "firebase";
 export default {
   data() {
     return {
-      //１段階目()
-      osusumeUsers: [
-        /*{
-          likeArtist: "",
-          name: "",
-          numberLikes: "",
-          id: "",
-          category: ""
-        }*/
-      ],
-      //最終的な出力
-      osusumeUsers2: [
-        /*{
-          likeArtist: "",
-          name: "",
-          numberLikes: "",
-          id: "",
-          category: ""
-        }*/
-      ],
+      osusumeUsers: [],
+      osusumeUsers2: [],
       myinfo: [],
+      Playlists: [],
+      Playlist: [],
     };
   },
   methods: {
@@ -68,31 +51,17 @@ export default {
         console.log(this.myinfo);
       });
     },
-    async osusumeSearch() {
-      const db = firebase.firestore();
-      //document取得
-      /*const doc = await db
-        .collection("users")
-        .doc("ExsalyVN0ZAcId6RC037")
-        .get();
 
-      console.log("data:", doc.data());
-      console.log("search");
-      */
-      //collection取得
-      const snapshot = await db
-        .collection("users")
-        //.where("category", "==", this.inputText)
-        //.limit(5)
-        //where,limitをいいね数で制限することが可能
-        .get();
+    async search() {
+      const db = firebase.firestore();
+      const snapshot = await db.collection("users").get();
       snapshot.forEach((doc) => {
-        console.log(doc.id, "=>", doc.data());
         this.osusumeUsers.push({
           docid: doc.id,
           ...doc.data(),
         });
       });
+
       for (let i = 0; i < this.osusumeUsers.length; i++) {
         if (this.osusumeUsers[i].id != this.myinfo[0].id) {
           if (this.osusumeUsers[i].category == this.myinfo[0].category) {
@@ -106,21 +75,28 @@ export default {
         }
       }
       console.log("!!:", this.osusumeUsers2);
-    },
-    async goodPlus() {
-      console.log("いいねしました！");
-      console.log("user:", this.user);
-      /* const db = firebase.firestore();
-      let goodnumber = this.user.numberLikes;
-      (goodnumber += 1),
-        await db
+
+      for (let i = 0; i < this.osusumeUsers2.length; i++) {
+        const pid = this.osusumeUsers2[i].docid;
+        console.log(pid);
+        const db = firebase.firestore();
+        const snapshot = await db
           .collection("users")
-          .doc(this.user.docid)
-          .update({
-            numberLikes: goodnumber,
+          .doc(pid)
+          .collection("Playlist")
+          .get();
+        snapshot.forEach((doc) => {
+          this.Playlists.push({
+            username: this.osusumeUsers2[i].name,
+            likeArtist: this.osusumeUsers2[i].likeArtist,
+            docid: doc.id,
+            ...doc.data(),
           });
-      this.user.numberLikes = goodnumber;
-      console.log("user:", this.user);*/
+        });
+        this.Playlist.push({ ...this.Playlists });
+        console.log("Playlist:", this.Playlist);
+        this.Playlists.splice(0, this.Playlists.length);
+      }
     },
   },
 };
