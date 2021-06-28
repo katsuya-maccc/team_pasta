@@ -1,21 +1,14 @@
 <template>
   <div class="osusume">
-    自分のユーザー名を入力
-    <div>
-      <input type="text" v-model="inputText" />
-      <button v-on:click="getMyinfo">ログイン</button>
-    </div>
-    <div>----</div>
     <div>
       <button v-on:click="search">おすすめユーザーを探す</button>
     </div>
-    <div v-for="user in Playlist" :key="user">
-      <div>ユーザー名：{{ user[0].username }}</div>
-      <div>お気に入りアーティスト：{{ user[0].likeArtist }}</div>
+    <div v-for="Playlist in Playlists" :key="Playlist">
+      <div>ユーザー名：{{ Playlist.username }}</div>
       <div>--Playlist--</div>
-      <div v-for="playlist in user" :key="playlist">
-        <div>曲名：{{ playlist.musicName }}</div>
-        <div>{{ playlist.artist }}</div>
+      <div v-for="song in Playlist.songs" :key="song">
+        <div>曲名：{{ song.name }}</div>
+        <div>アーティスト名：{{ song.artistName }}</div>
       </div>
       <div>----</div>
     </div>
@@ -31,10 +24,17 @@ export default {
       osusumeUsers: [],
       osusumeUsers2: [],
       myinfo: [],
+      playlistsID: [],
       Playlists: [],
-      Playlist: [],
     };
   },
+
+  computed: {
+    user() {
+      return this.$store.state.user;
+    },
+  },
+
   methods: {
     async getMyinfo() {
       const db = firebase.firestore();
@@ -61,10 +61,10 @@ export default {
           ...doc.data(),
         });
       });
-
+      console.log(this.user);
       for (let i = 0; i < this.osusumeUsers.length; i++) {
-        if (this.osusumeUsers[i].id != this.myinfo[0].id) {
-          if (this.osusumeUsers[i].category == this.myinfo[0].category) {
+        if (this.osusumeUsers[i].id != this.user.uid) {
+          if (this.osusumeUsers[i].category == this.user.category) {
             this.osusumeUsers2.push({
               name: this.osusumeUsers[i].name,
               likeArtist: this.osusumeUsers[i].likeArtist,
@@ -78,25 +78,26 @@ export default {
 
       for (let i = 0; i < this.osusumeUsers2.length; i++) {
         const pid = this.osusumeUsers2[i].docid;
-        console.log(pid);
         const db = firebase.firestore();
         const snapshot = await db
           .collection("users")
           .doc(pid)
-          .collection("Playlist")
+          .collection("playlist")
           .get();
         snapshot.forEach((doc) => {
-          this.Playlists.push({
+          this.playlistsID.push({
             username: this.osusumeUsers2[i].name,
             likeArtist: this.osusumeUsers2[i].likeArtist,
             docid: doc.id,
             ...doc.data(),
           });
+          console.log("ID", this.playlistsID);
         });
-        this.Playlist.push({ ...this.Playlists });
-        console.log("Playlist:", this.Playlist);
-        this.Playlists.splice(0, this.Playlists.length);
       }
+
+      this.Playlists.push(...this.playlistsID);
+      console.log("Playlists:", this.Playlists);
+      this.playlistsID.splice(0, this.playlistsID.length);
     },
   },
 };
