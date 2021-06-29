@@ -3,6 +3,7 @@
     <div class="signed-in-user-profile" v-if="user">
       <div>id : {{ user.uid }}</div>
       <div>name : {{ user.displayName }}</div>
+      <br /><br />
       <div class="signed-in-user-profile__photo">
         <img
           v-bind:src="
@@ -36,7 +37,22 @@ export default {
   height: 10rem;
 }
 .signed-in-user-profile__photo img {
+  border-radius: 50%;
   height: 100%;
   object-fit: contain;
+  border: 4px solid #ffffff;
+  animation: fuwafuwa 2s infinite ease-in-out;
+}
+
+@keyframes fuwafuwa {
+  0% {
+    taransform: translate(0, 0);
+  }
+  50% {
+    transform: translate(0, -20px);
+  }
+  100% {
+    tarnsform: translate(0, 0);
+  }
 }
 </style>
