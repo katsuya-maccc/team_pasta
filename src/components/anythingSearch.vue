@@ -1,8 +1,9 @@
 <template>
   <div class="good">
     <div>
-      UpperChill検索 0~1
+      <button v-on:click="erase">リセット</button>
     </div>
+    <div>UpperChill検索 0~1</div>
     <div>
       音楽的なポジティブさを表す0.0から1.0までのメジャー。価数の高いトラックはよりポジティブに聞こえ、価数の低いトラックはよりネガティブに聞こえます。
     </div>
@@ -11,34 +12,28 @@
       <button v-on:click="search">検索</button>
     </div>
     <div v-for="playlist in list" :key="playlist">
-      {{ playlist[0].username }}
-      <div v-for="music in playlist" :key="music">
-        <div>曲名：{{ music.musicName }}</div>
-        <div>valence：{{ music.valence }}</div>
+      {{ playlist.username }}
+      <div v-for="song in playlist.songs" :key="song">
+        <div>曲名：{{ song.name }}</div>
+        <div>valence：{{ song.valence }}</div>
       </div>
       <div>----</div>
     </div>
-    <div>
-      アコースティック検索 0~1
-    </div>
-    <div>
-      トラックが音響であるかどうか。高いほど音響がある可能性が高い。
-    </div>
+    <div>アコースティック検索 0~1</div>
+    <div>トラックが音響であるかどうか。高いほど音響がある可能性が高い。</div>
     <div>
       <input type="text" v-model="inputTextA" />
       <button v-on:click="searchA">検索</button>
     </div>
     <div v-for="playlistA in Alist" :key="playlistA">
-      {{ playlistA[0].username }}
-      <div v-for="music in playlistA" :key="music">
-        <div>曲名：{{ music.musicName }}</div>
-        <div>acousticness：{{ music.acousticness }}</div>
+      {{ playlistA.username }}
+      <div v-for="song in playlistA.songs" :key="song">
+        <div>曲名：{{ song.name }}</div>
+        <div>acousticness：{{ song.acousticness }}</div>
       </div>
       <div>----</div>
     </div>
-    <div>
-      ボーカル検索 0~1
-    </div>
+    <div>ボーカル検索 0~1</div>
     <div>
       トラックにボーカルが含まれていないかどうかの予測。高いほど可能性が高い。
     </div>
@@ -47,28 +42,24 @@
       <button v-on:click="searchB">検索</button>
     </div>
     <div v-for="playlistB in Blist" :key="playlistB">
-      {{ playlistB[0].username }}
-      <div v-for="music in playlistB" :key="music">
-        <div>曲名：{{ music.musicName }}</div>
-        <div>instrumentalness：{{ music.instrumentalness }}</div>
+      {{ playlistB.username }}
+      <div v-for="song in playlistB.songs" :key="song">
+        <div>曲名：{{ song.name }}</div>
+        <div>instrumentalness：{{ song.instrumentalness }}</div>
       </div>
       <div>----</div>
     </div>
-    <div>
-      BPM検索 平均100くらい
-    </div>
-    <div>
-      トラックの全体的な推定テンポ（ビート/分（BPM））。
-    </div>
+    <div>BPM検索 平均100くらい</div>
+    <div>トラックの全体的な推定テンポ（ビート/分（BPM））。</div>
     <div>
       <input type="text" v-model="inputTextC" />
       <button v-on:click="searchC">検索</button>
     </div>
     <div v-for="playlistC in Clist" :key="playlistC">
-      {{ playlistC[0].username }}
-      <div v-for="music in playlistC" :key="music">
-        <div>曲名：{{ music.musicName }}</div>
-        <div>BPM：{{ music.bpm }}</div>
+      {{ playlistC.username }}
+      <div v-for="song in playlistC.songs" :key="song">
+        <div>曲名：{{ song.name }}</div>
+        <div>BPM：{{ song.tempo }}</div>
       </div>
       <div>----</div>
     </div>
@@ -90,6 +81,13 @@ export default {
     };
   },
   methods: {
+    erase() {
+      this.list.splice(0, this.list.length);
+      this.Alist.splice(0, this.Alist.length);
+      this.Blist.splice(0, this.Blist.length);
+      this.Clist.splice(0, this.Clist.length);
+    },
+
     async search() {
       this.Users.splice(0, this.Users.length);
       const db = firebase.firestore();
@@ -112,7 +110,7 @@ export default {
         const snapshot = await db
           .collection("users")
           .doc(pid)
-          .collection("Playlist")
+          .collection("playlist")
           .get();
         snapshot.forEach((doc) => {
           this.Playlists.push({
@@ -125,25 +123,26 @@ export default {
         let k = 0;
         let sumUC = 0;
         for (let j = 0; j < this.Playlists.length; j++) {
-          let UC = this.Playlists[j].valence;
-          sumUC = sumUC + UC;
-          k += 1;
-        }
-        console.log("計算：", sumUC / k);
+          for (let i = 0; i < this.Playlists[j].songs.length; i++) {
+            let UC = this.Playlists[j].songs[i].valence;
+            sumUC = sumUC + UC;
+            k += 1;
+          }
+          console.log("計算：", sumUC / k);
 
-        let UC = it + 0.1;
+          let UC = it + 0.1;
+          let CU = UC - 0.2;
 
-        let CU = UC - 0.2;
+          console.log("UC:", UC);
+          console.log("CU:", CU);
 
-        console.log("UC:", UC);
-        console.log("CU:", CU);
-
-        if (sumUC / k < UC && CU < sumUC / k) {
-          console.log("if可");
-          this.list.push({ ...this.Playlists });
+          if (sumUC / k < UC && CU < sumUC / k) {
+            this.list.push({ ...this.Playlists[j] });
+          }
         }
         this.Playlists.splice(0, this.Playlists.length);
       }
+      console.log("list", this.list);
     },
 
     async searchA() {
@@ -168,7 +167,7 @@ export default {
         const snapshot = await db
           .collection("users")
           .doc(pid)
-          .collection("Playlist")
+          .collection("playlist")
           .get();
         snapshot.forEach((doc) => {
           this.Playlists.push({
@@ -181,25 +180,26 @@ export default {
         let k = 0;
         let sumUC = 0;
         for (let j = 0; j < this.Playlists.length; j++) {
-          let UC = this.Playlists[j].acousticness;
-          sumUC = sumUC + UC;
-          k += 1;
-        }
-        console.log("計算：", sumUC / k);
+          for (let i = 0; i < this.Playlists[j].songs.length; i++) {
+            let UC = this.Playlists[j].songs[i].acousticness;
+            sumUC = sumUC + UC;
+            k += 1;
+          }
+          console.log("計算：", sumUC / k);
 
-        let UC = it + 0.1;
+          let UC = it + 0.1;
+          let CU = UC - 0.2;
 
-        let CU = UC - 0.2;
+          console.log("UC:", UC);
+          console.log("CU:", CU);
 
-        console.log("UC:", UC);
-        console.log("CU:", CU);
-
-        if (sumUC / k < UC && CU < sumUC / k) {
-          console.log("if可");
-          this.Alist.push({ ...this.Playlists });
+          if (sumUC / k < UC && CU < sumUC / k) {
+            this.Alist.push({ ...this.Playlists[j] });
+          }
         }
         this.Playlists.splice(0, this.Playlists.length);
       }
+      console.log("Alist", this.Alist);
     },
 
     async searchB() {
@@ -224,7 +224,7 @@ export default {
         const snapshot = await db
           .collection("users")
           .doc(pid)
-          .collection("Playlist")
+          .collection("playlist")
           .get();
         snapshot.forEach((doc) => {
           this.Playlists.push({
@@ -237,25 +237,26 @@ export default {
         let k = 0;
         let sumUC = 0;
         for (let j = 0; j < this.Playlists.length; j++) {
-          let UC = this.Playlists[j].instrumentalness;
-          sumUC = sumUC + UC;
-          k += 1;
-        }
-        console.log("計算：", sumUC / k);
+          for (let i = 0; i < this.Playlists[j].songs.length; i++) {
+            let UC = this.Playlists[j].songs[i].instrumentalness;
+            sumUC = sumUC + UC;
+            k += 1;
+          }
+          console.log("計算：", sumUC / k);
 
-        let UC = it + 0.1;
+          let UC = it + 0.1;
+          let CU = UC - 0.2;
 
-        let CU = UC - 0.2;
+          console.log("UC:", UC);
+          console.log("CU:", CU);
 
-        console.log("UC:", UC);
-        console.log("CU:", CU);
-
-        if (sumUC / k < UC && CU < sumUC / k) {
-          console.log("if可");
-          this.Blist.push({ ...this.Playlists });
+          if (sumUC / k < UC && CU < sumUC / k) {
+            this.Blist.push({ ...this.Playlists[j] });
+          }
         }
         this.Playlists.splice(0, this.Playlists.length);
       }
+      console.log("Blist", this.Blist);
     },
 
     async searchC() {
@@ -280,7 +281,7 @@ export default {
         const snapshot = await db
           .collection("users")
           .doc(pid)
-          .collection("Playlist")
+          .collection("playlist")
           .get();
         snapshot.forEach((doc) => {
           this.Playlists.push({
@@ -293,24 +294,26 @@ export default {
         let k = 0;
         let sumUC = 0;
         for (let j = 0; j < this.Playlists.length; j++) {
-          let UC = this.Playlists[j].bpm;
-          sumUC = sumUC + UC;
-          k += 1;
-        }
-        console.log("計算：", sumUC / k);
+          for (let i = 0; i < this.Playlists[j].songs.length; i++) {
+            let UC = this.Playlists[j].songs[i].tempo;
+            sumUC = sumUC + UC;
+            k += 1;
+          }
+          console.log("計算：", sumUC / k);
 
-        let UC = it + 15;
-        let CU = it - 15;
+          let UC = it + 15;
+          let CU = it - 15;
 
-        console.log("UC:", UC);
-        console.log("CU:", CU);
+          console.log("UC:", UC);
+          console.log("CU:", CU);
 
-        if (sumUC / k < UC && CU < sumUC / k) {
-          console.log("if可");
-          this.Clist.push({ ...this.Playlists });
+          if (sumUC / k < UC && CU < sumUC / k) {
+            this.Clist.push({ ...this.Playlists[j] });
+          }
         }
         this.Playlists.splice(0, this.Playlists.length);
       }
+      console.log("Clist", this.Clist);
     },
   },
 };
