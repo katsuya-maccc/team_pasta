@@ -19,8 +19,8 @@ export default {
         .doc("uid")
         .collection("playlist")
         .get()
-        .then(function(getSongsData) {
-          getSongsData.forEach(function(songData) {
+        .then(function (getSongsData) {
+          getSongsData.forEach(function (songData) {
             console.log(songData.id, " => ", songData.data());
             let songDataChangeJson = JSON.stringify(songData.data());
             localStorage.setItem("songsData", songDataChangeJson);
