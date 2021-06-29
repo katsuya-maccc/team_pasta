@@ -6,6 +6,7 @@ import Playlist from "../components/anythingSearch.vue";
 import BeforeSignIn from "@/views/BeforeSignIn.vue";
 import AfterSignIn from "@/views/AfterSignIn.vue";
 import store from "@/store";
+import DisplayPlaylist from "../views/DisplayPlaylist.vue";
 
 Vue.use(VueRouter);
 
@@ -15,6 +16,13 @@ const routes = [
     name: "Home",
     component: Home,
   },
+
+  {
+    path: "/displayPlaylist",
+    name: "DisplayPlaylist",
+    component: DisplayPlaylist,
+  },
+
   {
     path: "/osusume",
     name: "Osusume",
